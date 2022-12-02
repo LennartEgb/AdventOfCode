@@ -5,7 +5,7 @@ import Day
 object Day2 : Day {
     override fun part1(input: List<String>): Any {
         fun parse(value: String): Game {
-            val (opponent, _, own) = value.toCharArray()
+            val (opponent, _, own) = value
             return Game(opponent = getPlay(opponent), own = getPlay(own))
         }
         return input.sumOf { parse(it).score }
@@ -13,7 +13,7 @@ object Day2 : Day {
 
     override fun part2(input: List<String>): Any {
         fun parse(value: String): Game {
-            val (opponent, _, outcome) = value.toCharArray()
+            val (opponent, _, outcome) = value
             val play = getPlay(opponent)
             val result = getOutcome(outcome)
             val ownPlay = getPlay(play, result)
@@ -60,35 +60,33 @@ object Day2 : Day {
         val score: Int = opponent.play(own).score + own.score
     }
 
-    private enum class Outcome(val score: Int) {
-        Win(score = 6),
-        Draw(score = 3),
-        Loss(score = 0),
-    }
+    private operator fun String.component1(): Char = get(0)
+    private operator fun String.component2(): Char = get(1)
+    private operator fun String.component3(): Char = get(2)
 
-    private enum class Play(val score: Int) {
-        Rock(score = 1),
-        Paper(score = 2),
-        Scissors(score = 3);
+    private enum class Outcome { Loss, Draw, Win }
+    private enum class Play { Rock, Paper, Scissors }
 
-        infix fun play(other: Play): Outcome = when (this) {
-            Rock -> when (other) {
-                Rock -> Outcome.Draw
-                Paper -> Outcome.Win
-                Scissors -> Outcome.Loss
-            }
+    private val Outcome.score: Int get() = ordinal * 3
+    private val Play.score: Int get() = ordinal + 1
 
-            Paper -> when (other) {
-                Rock -> Outcome.Loss
-                Paper -> Outcome.Draw
-                Scissors -> Outcome.Win
-            }
+    private fun Play.play(other: Play): Outcome = when (this) {
+        Play.Rock -> when (other) {
+            Play.Rock -> Outcome.Draw
+            Play.Paper -> Outcome.Win
+            Play.Scissors -> Outcome.Loss
+        }
 
-            Scissors -> when (other) {
-                Rock -> Outcome.Win
-                Paper -> Outcome.Loss
-                Scissors -> Outcome.Draw
-            }
+        Play.Paper -> when (other) {
+            Play.Rock -> Outcome.Loss
+            Play.Paper -> Outcome.Draw
+            Play.Scissors -> Outcome.Win
+        }
+
+        Play.Scissors -> when (other) {
+            Play.Rock -> Outcome.Win
+            Play.Paper -> Outcome.Loss
+            Play.Scissors -> Outcome.Draw
         }
     }
 }
