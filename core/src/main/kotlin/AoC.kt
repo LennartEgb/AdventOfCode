@@ -1,4 +1,4 @@
-abstract class Main {
+abstract class AoC {
     abstract val days: List<Day>
     abstract val loader: Loader
     fun run() {
