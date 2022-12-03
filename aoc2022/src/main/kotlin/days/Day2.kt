@@ -2,6 +2,7 @@ package days
 
 import Day
 
+
 object Day2 : Day {
     override fun part1(input: List<String>): Any {
         fun parse(value: String): Game {

@@ -1,7 +1,7 @@
 import java.io.File
 
-class Loader {
-    private val resourceDirectory = System.getProperty("user.dir") + "/src/main/resources"
+class Loader(year: String) {
+    private val resourceDirectory = System.getProperty("user.dir") + "/$year/src/main/resources"
     fun loadLines(day: Int, filename: String): List<String> {
         return fileOf(day, filename).readLines()
     }
