@@ -5,7 +5,7 @@ import Day
 private typealias Grid = Array<IntArray>
 
 object Day8 : Day {
-    class Forest(private val trees: Grid) {
+    class Forest(private val grid: Grid) {
         companion object {
             fun of(input: List<String>): Forest = input.map { row -> row.map { c -> c.digitToInt() }.toIntArray() }
                 .toTypedArray().let { Forest(it) }
@@ -13,29 +13,25 @@ object Day8 : Day {
 
         fun countVisible(): Int {
             var count = 0
-            trees.forEach { x, y, height ->
-                val (left, right) = trees.rowFor(y).partition(x)
-                if (left.verify(height) || right.verify(height)) {
+            grid.forEach { x, y, height ->
+                val (left, right) = grid.rowFor(y).partition(x)
+                val (top, bottom) = grid.columnFor(x).partition(index = y)
+                if (left.verify(height) || right.verify(height) || top.verify(height) || bottom.verify(height)) {
                     count++
-                    return@forEach
                 }
-                val (top, bottom) = trees.columnFor(x).partition(index = y)
-                if (top.verify(height) || bottom.verify(height)) count++
             }
             return count
         }
 
         fun getHighestScenicScore(): Int {
             var highest = 0
-            trees.forEach { x, y, height ->
-                val (top, bottom) = trees.columnFor(x).partition(y)
-                val (left, right) = trees.rowFor(y).partition(x)
-
-                val leftScore = left.reversed().scoreFor(height)
-                val rightScore = right.scoreFor(height)
-                val topScore = top.reversed().scoreFor(height)
-                val bottomScore = bottom.scoreFor(height)
-                val score = leftScore * rightScore * topScore * bottomScore
+            grid.forEach { x, y, height ->
+                val (top, bottom) = grid.columnFor(x).partition(y)
+                val (left, right) = grid.rowFor(y).partition(x)
+                val score = top.reversed().scoreFor(height) *
+                        right.scoreFor(height) *
+                        bottom.scoreFor(height) *
+                        left.reversed().scoreFor(height)
                 if (score > highest) highest = score
             }
             return highest
@@ -43,7 +39,7 @@ object Day8 : Day {
 
         private fun List<Int>.scoreFor(height: Int): Int {
             val index = indexOfFirst { it >= height }
-            if(index == -1 && isNotEmpty()) return size
+            if (index == -1 && isNotEmpty()) return size
             return index + 1
         }
 
@@ -58,11 +54,6 @@ object Day8 : Day {
         }
     }
 
-    override fun part1(input: List<String>): Any {
-        return Forest.of(input).countVisible()
-    }
-
-    override fun part2(input: List<String>): Any {
-        return Forest.of(input).getHighestScenicScore()
-    }
+    override fun part1(input: List<String>): Any = Forest.of(input).countVisible()
+    override fun part2(input: List<String>): Any = Forest.of(input).getHighestScenicScore()
 }
