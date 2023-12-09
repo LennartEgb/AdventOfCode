@@ -12,8 +12,12 @@ object Day2 : Day {
         return input.map { Direction.of(it) }
             .fold(Position(0, 0) to 0) { acc, direction ->
                 val (position, aim) = acc
-                val (newPosition, newAim) = when(direction) {
-                    is Direction.Forward -> position.copy(x = position.x + direction.value, y = position.y + direction.value * aim) to aim
+                val (newPosition, newAim) = when (direction) {
+                    is Direction.Forward -> position.copy(
+                        x = position.x + direction.value,
+                        y = position.y + direction.value * aim
+                    ) to aim
+
                     is Direction.Down -> position to (aim + direction.value)
                     is Direction.Up -> position to (aim - direction.value)
                 }
