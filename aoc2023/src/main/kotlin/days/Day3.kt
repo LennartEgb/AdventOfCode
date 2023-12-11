@@ -14,10 +14,21 @@ object Day3 : Day {
         val expandedRow: IntRange = row - 1..row + 1
     }
 
+    private val numberRegex = """\d+""".toRegex()
+    private val symbolRegex = """[^.;^\d^\n]+""".toRegex()
+
     override fun part1(input: List<String>): Any {
-        return input.mapIndexed(::extractElements)
-            .findParts()
-            .sumOf { it.value }
+        val elements = input.mapIndexed(::extractElements).flatten()
+
+        println("----------- manual check -----------")
+        println("Found numbers: ${elements.filterIsInstance<Number>().size}")
+        println("Found symbols: ${elements.filterIsInstance<Symbol>().size}")
+
+        println("----------- Regex check -----------")
+        println("Found numbers: ${numberRegex.findAll(input.joinToString("\n")).count()}")
+        println("Found numbers: ${symbolRegex.findAll(input.joinToString("\n")).count()}")
+
+        return elements.findParts().sumOf { it.value }
     }
 
     override fun part2(input: List<String>): Any {
@@ -49,19 +60,13 @@ object Day3 : Day {
         }
     }
 
-    private fun List<SchematicRow>.findParts(): Set<Number> {
-        val parts = mutableSetOf<Number>()
-        windowed(size = 2).map { twoRows ->
-            val symbols = twoRows.flatten().filterIsInstance<Symbol>()
-            val numbers = twoRows.flatten().filterIsInstance<Number>()
-            numbers.filter { number ->
-                symbols.any { symbol ->
-                    symbol.column in number.expandedColumn
-                }
-            }.forEach(parts::add)
-        }
-
-        return parts
+    private fun SchematicRow.findParts(): List<Number> {
+        val numbers = filterIsInstance<Number>()
+        val symbols = filterIsInstance<Symbol>()
+        return numbers.filter { number -> symbols.any { symbol -> symbol in number } }
     }
+
+    private operator fun Number.contains(symbol: Symbol): Boolean =
+        symbol.row in expandedRow && symbol.column in expandedColumn
 }
 
