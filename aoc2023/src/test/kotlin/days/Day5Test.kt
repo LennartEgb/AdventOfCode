@@ -46,8 +46,8 @@ class Day5Test {
         val map = Day5.RangeMap(
             name = "humidity-to-location map:",
             definitions = listOf(
-                Day5.RangeDefinition(destinationStart = 60, sourceStart = 56, length = 37),
-                Day5.RangeDefinition(destinationStart = 56, sourceStart = 93, length = 4),
+                Day5.Block(dst = 60, src = 56, length = 37),
+                Day5.Block(dst = 56, src = 93, length = 4),
             )
         )
         val maps = Day5.RangeMaps(listOf(map))
